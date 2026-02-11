@@ -21,9 +21,18 @@ df = df[~df["discharge_disposition_id"].isin(discharge_ids_to_remove)]
 df["readmitted_binary"] = df["readmitted"].apply(lambda x: 1 if x == "<30" else 0)
 
 #Idade e diagnosticos
-age_dict = {"[0-10]":5, "[10-20]": 15, "[20-30]": 25, "[30-40]": 35,
-            "[40-50]": 45, "[50-60]": 55, "[60-70]": 65, "[70-80]": 75,
-            "[80-90]": 85, "[90-100]": 95}
+age_dict = {
+    "[0-10)": 5, 
+    "[10-20)": 15, 
+    "[20-30)": 25, 
+    "[30-40)": 35,
+    "[40-50)": 45, 
+    "[50-60)": 55, 
+    "[60-70)": 65, 
+    "[70-80)": 75,
+    "[80-90)": 85, 
+    "[90-100)": 95
+}
 df["age_midpoint"] = df["age"].map(age_dict)
 
 #função icd-9
@@ -128,3 +137,13 @@ plt.figure(figsize=(8,6))
 disp.plot(cmap="Blues")
 plt.title("Matriz de Confusão: Acertos X Erros")
 plt.show()
+
+#validação final dos dados
+print("Verificação de Qualidade")
+nulos_idade = df["age_midpoint"].isnull().sum()
+print(f"Valores nulos em Idade: {nulos_idade}")
+
+if nulos_idade == 0:
+    print("Todas as idades foram mapeadas corretamente.")
+else:
+    print("Atenção, existem idaddes não mapeadas. verifique o dicionario age_dict.")
